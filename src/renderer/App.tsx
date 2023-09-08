@@ -1,50 +1,44 @@
+import { useEffect, useState } from 'react';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import { Provider as RxDbProvider } from 'rxdb-hooks';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { Box, CssBaseline, ThemeProvider } from '@mui/material';
+import Navigation from './components/Navigation';
+import TemplatePage from './pages/Template';
 import './App.css';
-
-function Hello() {
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="folded hands">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
-}
+import theme from './theme/theme';
+import initialize from './db/db';
 
 export default function App() {
+  const [db, setDb] = useState<any>();
+
+  useEffect(() => {
+    // RxDB instantiation can be asynchronous
+    initialize()
+      .then(setDb)
+      .catch((err) => console.error(err));
+  }, []);
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
+      <CssBaseline />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <ThemeProvider theme={theme}>
+          <RxDbProvider db={db}>
+            <Box sx={{ display: 'flex' }}>
+              <Navigation />
+              <Box
+                component="main"
+                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+              >
+                <Routes>
+                  <Route path="/template" element={<TemplatePage />} />
+                </Routes>
+              </Box>
+            </Box>
+          </RxDbProvider>
+        </ThemeProvider>
+      </LocalizationProvider>
     </Router>
   );
 }
