@@ -14,6 +14,7 @@ export interface EmployeeCollection {
   address: string;
   city: string;
   phone: string;
+  checkedByDefault: boolean;
 }
 
 export interface TemplateCollection {

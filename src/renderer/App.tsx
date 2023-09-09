@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider as RxDbProvider } from 'rxdb-hooks';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -9,6 +9,8 @@ import TemplatePage from './pages/Template';
 import './App.css';
 import theme from './theme/theme';
 import initialize from './db/db';
+import Global from './components/Global';
+import snackbarReducer, { snackbarInitialState } from './store/snackbar';
 
 export default function App() {
   const [db, setDb] = useState<any>();
@@ -19,6 +21,11 @@ export default function App() {
       .then(setDb)
       .catch((err) => console.error(err));
   }, []);
+
+  const [snackbarState, snackbarDispatcher] = useReducer(
+    snackbarReducer,
+    snackbarInitialState
+  );
   return (
     <Router>
       <CssBaseline />
@@ -29,11 +36,25 @@ export default function App() {
               <Navigation />
               <Box
                 component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+                sx={{
+                  flexGrow: 1,
+                  minHeight: '100vh',
+                  bgcolor: 'background.default',
+                  p: 3,
+                }}
               >
                 <Routes>
-                  <Route path="/template" element={<TemplatePage />} />
+                  <Route
+                    path="/template"
+                    element={
+                      <TemplatePage snackbarDispatcher={snackbarDispatcher} />
+                    }
+                  />
                 </Routes>
+                <Global
+                  snackbar={snackbarState}
+                  snackbarDispatcher={snackbarDispatcher}
+                />
               </Box>
             </Box>
           </RxDbProvider>

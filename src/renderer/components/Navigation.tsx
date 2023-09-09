@@ -1,21 +1,24 @@
 import {
+  Divider,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Toolbar,
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { Link } from 'react-router-dom';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import { useNavigate } from 'react-router-dom';
 
-const drawerWidth = 240;
+const drawerWidth = 180;
 
 const MenuData = [
   {
     name: 'Plantilla',
-    icon: <AddCircleOutlineIcon />,
+    icon: <PostAddIcon />,
     route: '/template',
   },
   {
@@ -26,6 +29,12 @@ const MenuData = [
 ];
 
 export default function Navigation() {
+  const navigate = useNavigate();
+
+  function handleNavigate(route: string) {
+    navigate(route);
+  }
+
   return (
     <Drawer
       sx={{
@@ -39,15 +48,17 @@ export default function Navigation() {
       variant="permanent"
       anchor="left"
     >
+      <Toolbar>
+        <h3>Sistema de Nómina Linea GM</h3>
+      </Toolbar>
+      <Divider />
       <List>
         {MenuData.map(({ name, icon, route }) => (
           <ListItem key={name} disablePadding>
-            <Link to={route}>
-              <ListItemButton>
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={name} />
-              </ListItemButton>
-            </Link>
+            <ListItemButton onClick={() => handleNavigate(route)}>
+              <ListItemIcon>{icon}</ListItemIcon>
+              <ListItemText primary={name} />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>

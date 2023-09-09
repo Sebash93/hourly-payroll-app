@@ -5,6 +5,7 @@ import {
   DialogContent,
   TextField,
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { useRxCollection } from 'rxdb-hooks';
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -42,7 +43,13 @@ export default function NewEmployeeDialog() {
   };
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <Button
+        variant="outlined"
+        onClick={handleClickOpen}
+        startIcon={<AddIcon />}
+        size="large"
+        sx={{ mt: 1 }}
+      >
         Agregar Nuevo Empleado
       </Button>
       <Dialog open={open} onClose={handleClose}>
