@@ -16,7 +16,7 @@ import { fromDateToTimestamp } from 'renderer/utils/dates';
 import HolidaySelector from 'renderer/components/HolidaySelector';
 import EmployeesSelector from 'renderer/components/EmployeesSelector';
 import { noEmptyArray } from 'renderer/utils/validations';
-import { Dispatch, useReducer } from 'react';
+import { Dispatch } from 'react';
 import snackbarReducer, {
   SnackbarAction,
   snackbarInitialState,

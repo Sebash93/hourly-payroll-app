@@ -11,6 +11,7 @@ import theme from './theme/theme';
 import initialize from './db/db';
 import Global from './components/Global';
 import snackbarReducer, { snackbarInitialState } from './store/snackbar';
+import PayrollPage from './pages/Payroll';
 
 export default function App() {
   const [db, setDb] = useState<any>();
@@ -50,6 +51,7 @@ export default function App() {
                       <TemplatePage snackbarDispatcher={snackbarDispatcher} />
                     }
                   />
+                  <Route path="/payroll" element={<PayrollPage />} />
                 </Routes>
                 <Global
                   snackbar={snackbarState}

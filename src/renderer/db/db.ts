@@ -40,13 +40,16 @@ export interface PayrollCollection {
   bonus: number;
   employee: string;
   hours: PayrollHours[];
+  total_common_hours: number;
+  total_holiday_hours: number;
+  payment_amount: number;
 }
 
 addRxPlugin(RxDBDevModePlugin);
 
 export default async function initialize() {
   const db = await createRxDatabase({
-    name: 'test2',
+    name: 'test3',
     storage: getRxStorageDexie(),
     ignoreDuplicate: true,
   });
@@ -168,6 +171,15 @@ export default async function initialize() {
                 },
               },
             },
+          },
+          total_common_hours: {
+            type: 'number',
+          },
+          total_holiday_hours: {
+            type: 'number',
+          },
+          payment_amount: {
+            type: 'number',
           },
         },
       },
