@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   Box,
   Button,
@@ -12,18 +13,30 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 
-import { EmployeeCollection, TemplateCollection } from 'renderer/db/db';
-import { generatePayrollHoursRows } from 'renderer/utils/adapters';
+import currency from 'currency.js';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  COLLECTION,
+  EmployeeCollection,
+  PayrollCollection,
+  TemplateCollection,
+} from 'renderer/db/db';
+import {
+  CURRENCY_FORMAT,
+  generatePayrollHoursRows,
+} from 'renderer/utils/adapters';
+import { fromDateToTimestamp } from 'renderer/utils/dates';
+import { useRxCollection } from 'rxdb-hooks';
 import HoursTable from './HoursTable';
-import { Controller, useForm } from 'react-hook-form';
+import { RowState } from './HoursTableRow';
 
 interface PayrollHoursDialogProps {
   open: boolean;
   handleClose: () => void;
   employee: EmployeeCollection;
   template: TemplateCollection;
-  shorStartDate: string;
-  humanEndDate: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface TotalHours {
@@ -43,10 +56,11 @@ export default function PayrollHoursDialog({
   handleClose,
   employee,
   template,
-  shorStartDate,
-  humanEndDate,
+  startDate,
+  endDate,
 }: PayrollHoursDialogProps) {
   const [totalHours, setTotalHours] = useState<TotalHours>({});
+  const [hoursData, setHoursData] = useState<Record<string, RowState>>({});
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
 
   const hoursRows = useMemo(
@@ -54,19 +68,15 @@ export default function PayrollHoursDialog({
     [template]
   );
 
-  const {
-    handleSubmit,
-    control,
-    register,
-    getValues,
-    formState: { errors },
-  } = useForm<Inputs>({
-    criteriaMode: 'all',
-  });
+  const { handleSubmit, control, register, getValues, formState } =
+    useForm<Inputs>({
+      criteriaMode: 'all',
+    });
+
+  const collection = useRxCollection(COLLECTION.PAYROLL);
 
   const calculate = () => {
     const { totalHours, hourly_rate, holiday_hourly_rate, bonus } = getValues();
-    console.log({ totalHours, hourly_rate, holiday_hourly_rate, bonus });
     const paymentAmount =
       totalHours.common * parseInt(hourly_rate) +
       totalHours.holiday * parseInt(holiday_hourly_rate) +
@@ -74,10 +84,47 @@ export default function PayrollHoursDialog({
     setPaymentAmount(paymentAmount);
   };
 
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const formattedHours = Object.keys(hoursData).reduce((acc, date) => {
+      const { startTime, endTime, first_break, second_break } = hoursData[date];
+      if (!startTime || !endTime) {
+        return acc;
+      }
+      return {
+        ...acc,
+        [date]: {
+          startTime: fromDateToTimestamp(startTime),
+          endTime: fromDateToTimestamp(endTime),
+          first_break,
+          second_break,
+        },
+      };
+    }, {});
+    const formattedData: PayrollCollection = {
+      id: `${employee.id}-${template.id}`,
+      employeeId: employee.id,
+      templateId: template.id,
+      hourly_rate: data.hourly_rate,
+      holiday_hourly_rate: data.holiday_hourly_rate,
+      bonus: data.bonus,
+      hours: formattedHours,
+      payment_amount: paymentAmount,
+      total_common_hours: totalHours.common ?? 0,
+      total_holiday_hours: totalHours.holiday ?? 0,
+    };
+
+    try {
+      await collection?.upsert(formattedData);
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Dialog fullWidth maxWidth="xl" open={open} onClose={handleClose}>
       <DialogTitle>
-        Horas del {shorStartDate} hasta el {humanEndDate}
+        Horas del {startDate} al {endDate}
       </DialogTitle>
       <DialogContent>
         <Box
@@ -166,7 +213,7 @@ export default function PayrollHoursDialog({
                 H. Festiva: {totalHours.holiday}
               </Typography>
               <Typography variant="h6" sx={{ display: 'inline-block' }}>
-                Pago Total: {paymentAmount}
+                Pago Total: {currency(paymentAmount, CURRENCY_FORMAT).format()}
               </Typography>
             </Grid>
           </Grid>
@@ -177,18 +224,22 @@ export default function PayrollHoursDialog({
             render={({ field }) => (
               <HoursTable
                 rows={hoursRows}
+                onTableStateChange={(rowsData) => {
+                  setHoursData(rowsData);
+                }}
                 onTotalHoursChange={(hours) => {
                   setTotalHours(hours);
                   field.onChange(hours);
                   calculate();
                 }}
+                onSaveClick={handleSubmit(onSubmit)}
               />
             )}
           />
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cerrar y borrar</Button>
+        <Button onClick={handleClose}>Cerrar</Button>
       </DialogActions>
     </Dialog>
   );

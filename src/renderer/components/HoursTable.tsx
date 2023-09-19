@@ -14,8 +14,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
+import CheckIcon from '@mui/icons-material/Check';
 import HoursTableRow, { RowData } from './HoursTableRow';
 
 interface HoursTableProps {
@@ -27,6 +28,8 @@ interface HoursTableProps {
     common: number;
     holiday: number;
   }) => void;
+  onTableStateChange: (rowsData: Record<string, RowData>) => void;
+  onSaveClick: () => void;
 }
 
 interface HoursData {
@@ -37,8 +40,12 @@ interface HoursData {
 export default function HoursTable({
   rows,
   onTotalHoursChange,
+  onTableStateChange,
+  onSaveClick,
 }: HoursTableProps) {
   const [hoursData, setHoursData] = useState<Record<string, HoursData>>({});
+  const [rowsData, setRowsData] = useState<RowData[]>({});
+  const [hasCalculated, setHasCalculated] = useState<boolean>(false);
 
   const handleOnHoursChange = (
     id: number,
@@ -48,6 +55,7 @@ export default function HoursTable({
     setHoursData((prev) => {
       return { ...prev, [id]: { hours, isHolidayRate } };
     });
+    setHasCalculated(false);
   };
 
   const handleCalculateClick = () => {
@@ -62,6 +70,8 @@ export default function HoursTable({
       }
     });
     onTotalHoursChange({ common, holiday });
+    onTableStateChange(rowsData);
+    setHasCalculated(true);
   };
 
   return (
@@ -74,13 +84,24 @@ export default function HoursTable({
             sx={{ display: 'flex', justifyContent: 'space-between' }}
           >
             Planilla de horas
-            <Button
-              variant="contained"
-              endIcon={<CalculateOutlinedIcon />}
-              onClick={handleCalculateClick}
-            >
-              Calcular
-            </Button>
+            <div>
+              <Button
+                variant="outlined"
+                endIcon={<CalculateOutlinedIcon />}
+                onClick={handleCalculateClick}
+                sx={{ marginRight: 2 }}
+              >
+                Calcular
+              </Button>
+              <Button
+                variant="contained"
+                endIcon={<CheckIcon />}
+                onClick={onSaveClick}
+                disabled={!hasCalculated}
+              >
+                Guardar Nómina
+              </Button>
+            </div>
           </Typography>
         </Grid>
       </Grid>
@@ -109,6 +130,11 @@ export default function HoursTable({
                     row.isHoliday || row.isSunday
                   )
                 }
+                onRowStateChange={(rowState) => {
+                  setRowsData((prev) => {
+                    return { ...prev, [row.timestamp]: rowState };
+                  });
+                }}
               />
             ))}
           </TableBody>

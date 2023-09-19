@@ -1,17 +1,7 @@
-import {
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-} from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import { useNavigate } from 'react-router-dom';
+import { Box, Breadcrumbs, Link, Typography } from '@mui/material';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const drawerWidth = 180;
 
@@ -24,44 +14,76 @@ const MenuData = [
   {
     name: 'Nómina',
     icon: <AccessTimeIcon />,
-    route: '/payroll',
+    route: '/payroll/:templateId',
+  },
+  {
+    name: 'Documentos',
+    icon: <AccessTimeIcon />,
+    route: '/documents/:templateId',
   },
 ];
 
+const getPathsWithRoutes = (path, templateId) => {
+  const paths = path.split('/');
+  return paths.map((currentPath) => {
+    if (currentPath === 'payroll') {
+      return {
+        name: 'Nómina',
+        url: `/payroll/${templateId}`,
+      };
+    }
+    if (currentPath === 'documents') {
+      return {
+        name: 'Documentos',
+        url: `/payroll/${templateId}/documents`,
+      };
+    }
+    return '';
+  });
+};
+
 export default function Navigation() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { templateId } = useParams();
+  const paths = getPathsWithRoutes(location.pathname, templateId);
 
   function handleNavigate(route: string) {
     navigate(route);
   }
 
   return (
-    <Drawer
+    <Box
       sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-        },
+        p: 3,
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
       }}
-      variant="permanent"
-      anchor="left"
     >
-      <Toolbar>
-        <h3>Sistema de Nómina Linea GM</h3>
-      </Toolbar>
-      <Divider />
-      <List>
-        {MenuData.map(({ name, icon, route }) => (
-          <ListItem key={name} disablePadding>
-            <ListItemButton onClick={() => handleNavigate(route)}>
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Drawer>
+      <Typography variant="h5" component="div" sx={{ mr: 3 }}>
+        Nomina Línea GM
+      </Typography>
+      <Breadcrumbs sx={{ flexGrow: 1 }} aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/">
+          Planillas
+        </Link>
+        {paths.map((path) => {
+          if (path === '') {
+            return '';
+          }
+          return (
+            <Link
+              key={path.name}
+              underline="hover"
+              color="inherit"
+              href={path.url}
+            >
+              {path.name}
+            </Link>
+          );
+        })}
+      </Breadcrumbs>
+    </Box>
   );
 }

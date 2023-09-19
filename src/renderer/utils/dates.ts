@@ -1,4 +1,4 @@
-import { differenceInHours, differenceInMinutes } from 'date-fns';
+import { differenceInMinutes, format } from 'date-fns';
 import config from './config';
 
 export const fromDateToTimestamp = (date: Date): number => {
@@ -10,12 +10,7 @@ export const fromTimestampToDate = (timestamp: number): Date => {
 };
 
 export const fromTimestampToHumanDate = (timestamp: number): string => {
-  return fromTimestampToDate(timestamp).toLocaleDateString('es-CO', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  return format(new Date(timestamp), 'EEEE dd');
 };
 
 export const differenceInMinutesOrFail = (start: Date, end: Date): number => {
@@ -39,4 +34,5 @@ export const hoursWithoutBreaks = (
   return parseFloat(((workingMinutes - breakMinutes) / 60).toFixed(2));
 };
 
-export const SHORT_DATE_FORMAT = 'dd/MMM/yyyy';
+export const SHORT_DATE_FORMAT = 'd/MMM/yy';
+export const LARGE_DATE_FORMAT = 'dd MMMM yyyy';

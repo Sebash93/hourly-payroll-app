@@ -1,3 +1,5 @@
+import ClearIcon from '@mui/icons-material/Clear';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import {
   Alert,
   IconButton,
@@ -7,13 +9,11 @@ import {
   ListItemText,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
-import EventIcon from '@mui/icons-material/Event';
 import { useEffect, useState } from 'react';
 import {
   fromDateToTimestamp,
   fromTimestampToHumanDate,
 } from 'renderer/utils/dates';
-import ClearIcon from '@mui/icons-material/Clear';
 
 function HolidayItem({
   date,
@@ -32,7 +32,7 @@ function HolidayItem({
       }
     >
       <ListItemIcon>
-        <EventIcon />
+        <WbSunnyIcon />
       </ListItemIcon>
       <ListItemText primary={humanDate} />
     </ListItem>
@@ -66,10 +66,19 @@ export default function HolidaySelector({ onChange }: HolidaySelectorProps) {
 
   return (
     <>
+      <DatePicker
+        defaultValue={null}
+        label="Agrega un dia festivo"
+        slotProps={{
+          textField: {
+            size: 'small',
+          },
+        }}
+        sx={{ mb: 2 }}
+        onChange={(date: Date | null) => handleChange(date)}
+      />
       {!holidays || !holidays.length ? (
-        <Alert sx={{ mb: 2 }} severity="info">
-          Se guardará la planilla sin festivos
-        </Alert>
+        <Alert severity="info">Se guardará la planilla sin festivos</Alert>
       ) : (
         <>
           <List dense sx={{ width: '320px' }}>
@@ -86,12 +95,6 @@ export default function HolidaySelector({ onChange }: HolidaySelectorProps) {
           </Alert>
         </>
       )}
-
-      <DatePicker
-        defaultValue={null}
-        label="Agrega un dia festivo"
-        onChange={(date: Date | null) => handleChange(date)}
-      />
     </>
   );
 }

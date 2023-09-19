@@ -1,12 +1,28 @@
-import { CircularProgress, Grid, Paper, Typography } from '@mui/material';
+import ArticleIcon from '@mui/icons-material/Article';
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material';
+import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import EmployeeCard from 'renderer/components/EmployeeCard';
 import PayrollHoursDialog from 'renderer/components/PayrollHoursDialog';
-import { COLLECTION, EmployeeCollection } from 'renderer/db/db';
-import { RxQueryResultDoc, useRxData } from 'rxdb-hooks';
+import {
+  COLLECTION,
+  EmployeeCollection,
+  TemplateCollection,
+} from 'renderer/db/db';
+import { SHORT_DATE_FORMAT } from 'renderer/utils/dates';
+import { useRxData } from 'rxdb-hooks';
 
 export default function PayrollPage() {
-  const [open, setOpen] = useState(true);
+  let { templateId } = useParams();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   // selectedEmployee state
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeCollection>(
     {}
@@ -14,11 +30,12 @@ export default function PayrollPage() {
 
   // employess state
   const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
+  const [template, setTemplate] = useState<TemplateCollection>(null);
 
   // Load templates
-  const { result: templates, isFetching } = useRxData(
+  const { result: templates, isFetching } = useRxData<TemplateCollection>(
     COLLECTION.TEMPLATE,
-    (collection) => collection.find({})
+    (collection) => collection.findOne({ selector: { id: templateId } })
   );
 
   // Load employees
@@ -27,6 +44,7 @@ export default function PayrollPage() {
       if (templates.length === 0) return;
       const templateEmployees = await templates[0].populate('employees');
       setEmployees(templateEmployees);
+      setTemplate(templates[0]);
     }
     populateEmployees();
   }, [templates]);
@@ -37,43 +55,55 @@ export default function PayrollPage() {
   };
 
   /*  template[0].populate('employees'); */
-  if (isFetching) return <CircularProgress />;
+  if (isFetching || !template) return <CircularProgress />;
   return (
-    <Paper sx={{ padding: '24px' }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ display: 'flex', justifyContent: 'space-between' }}
-          >
-            Crear Nómina
-            {/* <Button
-              variant="contained"
-              endIcon={<CheckIcon />}
-              onClick={handleSubmit(onSubmit)}
+    <>
+      <Typography variant="h4" sx={{ p: 2 }}>
+        Horas
+      </Typography>
+      <Paper sx={{ padding: '24px' }}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} sx={{ marginBottom: '16' }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{ display: 'flex', justifyContent: 'space-between' }}
             >
-              Guardar
-            </Button> */}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={4}>
-        {employees.map((employee) => (
-          <Grid item lg={3} md={4} sm={6} xs={12}>
-            <EmployeeCard
-              name={employee.name}
-              onClick={() => handleEmployeeClick(employee)}
-            />
+              {format(new Date(template.start_date), SHORT_DATE_FORMAT)} al{' '}
+              {format(new Date(template.end_date), SHORT_DATE_FORMAT)}
+              <span>
+                <Button
+                  variant="contained"
+                  endIcon={<ArticleIcon />}
+                  onClick={() => navigate(`/payroll/${template.id}/documents`)}
+                >
+                  Documentos
+                </Button>
+              </span>
+            </Typography>
           </Grid>
-        ))}
-      </Grid>
-      <PayrollHoursDialog
-        open={open}
-        handleClose={() => setOpen(false)}
-        employee={selectedEmployee}
-        template={templates[0]}
-      />
-    </Paper>
+        </Grid>
+        <Grid container spacing={4}>
+          {employees.map((employee) => (
+            <Grid key={employee.id} item lg={3} md={4} sm={6} xs={12}>
+              <EmployeeCard
+                id={employee.id}
+                templateId={template.id}
+                name={employee.name}
+                onClick={() => handleEmployeeClick(employee)}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        <PayrollHoursDialog
+          open={open}
+          handleClose={() => setOpen(false)}
+          startDate={format(new Date(template.start_date), SHORT_DATE_FORMAT)}
+          endDate={format(new Date(template.end_date), SHORT_DATE_FORMAT)}
+          employee={selectedEmployee}
+          template={templates[0]}
+        />
+      </Paper>
+    </>
   );
 }

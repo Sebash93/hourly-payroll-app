@@ -1,14 +1,16 @@
+import AddIcon from '@mui/icons-material/Add';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
+  Grid,
   TextField,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { useRxCollection } from 'rxdb-hooks';
 import { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useRxCollection } from 'rxdb-hooks';
 import { COLLECTION } from '../db/db';
 
 type Inputs = {
@@ -26,11 +28,13 @@ export default function NewEmployeeDialog() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     await collection?.upsert(data);
+    reset();
     setOpen(false);
   };
 
@@ -47,50 +51,64 @@ export default function NewEmployeeDialog() {
         variant="outlined"
         onClick={handleClickOpen}
         startIcon={<AddIcon />}
-        size="large"
+        size="small"
         sx={{ mt: 1 }}
       >
         Agregar Nuevo Empleado
       </Button>
       <Dialog open={open} onClose={handleClose}>
+        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+          Nuevo Empleado
+        </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Nombre"
-            type="text"
-            fullWidth
-            variant="standard"
-            {...register('name', { required: true })}
-          />
-          <TextField
-            margin="dense"
-            id="id"
-            label="Cédula/NIT"
-            type="text"
-            fullWidth
-            variant="standard"
-            {...register('id', { required: true })}
-          />
-          <TextField
-            margin="dense"
-            id="address"
-            label="Dirección"
-            type="text"
-            fullWidth
-            variant="standard"
-            {...register('address')}
-          />
-          <TextField
-            margin="dense"
-            id="city"
-            label="Ciudad"
-            type="text"
-            fullWidth
-            variant="standard"
-            {...register('city')}
-          />
+          <Grid container spacing={2}>
+            <Grid item sm={8}>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Nombre"
+                type="text"
+                fullWidth
+                variant="standard"
+                {...register('name', { required: true })}
+              />
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                margin="dense"
+                id="id"
+                label="Cédula/NIT"
+                type="text"
+                fullWidth
+                variant="standard"
+                {...register('id', { required: true })}
+              />
+            </Grid>
+            <Grid item sm={8}>
+              <TextField
+                margin="dense"
+                id="address"
+                label="Dirección"
+                type="text"
+                fullWidth
+                variant="standard"
+                {...register('address')}
+              />
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                margin="dense"
+                id="city"
+                label="Ciudad"
+                type="text"
+                fullWidth
+                variant="standard"
+                {...register('city')}
+              />
+            </Grid>
+          </Grid>
+
           <TextField
             margin="dense"
             id="phone"
@@ -104,7 +122,7 @@ export default function NewEmployeeDialog() {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleSubmit(onSubmit)} variant="contained">
-            Guardar
+            Crear
           </Button>
         </DialogActions>
       </Dialog>

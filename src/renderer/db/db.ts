@@ -1,6 +1,6 @@
-import { createRxDatabase, addRxPlugin } from 'rxdb';
-import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
+import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 
 export enum COLLECTION {
   EMPLOYEE = 'employee',
@@ -38,8 +38,9 @@ export interface PayrollCollection {
   hourly_rate: number;
   holiday_hourly_rate: number;
   bonus: number;
-  employee: string;
-  hours: PayrollHours[];
+  employeeId: string;
+  templateId: string;
+  hours: Record<string, PayrollHours>;
   total_common_hours: number;
   total_holiday_hours: number;
   payment_amount: number;
@@ -49,7 +50,7 @@ addRxPlugin(RxDBDevModePlugin);
 
 export default async function initialize() {
   const db = await createRxDatabase({
-    name: 'test3',
+    name: 'test5',
     storage: getRxStorageDexie(),
     ignoreDuplicate: true,
   });
@@ -147,9 +148,13 @@ export default async function initialize() {
           bonus: {
             type: 'number',
           },
-          employee: {
+          employeeId: {
             type: 'string',
             ref: 'employee',
+          },
+          templateId: {
+            type: 'string',
+            ref: 'template',
           },
           hours: {
             type: 'array',

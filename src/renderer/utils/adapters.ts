@@ -1,16 +1,21 @@
 /* eslint-disable import/prefer-default-export */
-import { TemplateCollection } from 'renderer/db/db';
 import {
+  isSaturday as checkIsSaturday,
+  isSunday as checkIsSunday,
   eachDayOfInterval,
   format,
-  isSunday as checkIsSunday,
-  isSaturday as checkIsSaturday,
+  getTime,
   setHours,
   setMinutes,
   toDate,
-  getTime,
 } from 'date-fns';
+import { TemplateCollection } from '../db/db';
 import { SHORT_DATE_FORMAT } from './dates';
+
+export const CURRENCY_FORMAT = {
+  separator: '.',
+  precision: 0,
+};
 
 export const generatePayrollHoursRows = (template: TemplateCollection) => {
   const startDate = toDate(template.start_date);
@@ -44,3 +49,15 @@ export const generatePayrollHoursRows = (template: TemplateCollection) => {
     };
   });
 };
+
+/* export const generatePayrollHoursModel = (
+  hoursData: Record<string, RowState[]>,
+) => {
+  return hoursData.map((row) => ({
+    id: timestamp,
+    start_time: fromDateToTimestamp(row.startTime),
+    end_time: fromDateToTimestamp(row.endTime),
+    first_brake: row.first_break,
+    second_brake: row.second_break,
+  }));
+}; */

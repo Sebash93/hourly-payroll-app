@@ -11,6 +11,9 @@
     "html",
     "typescriptreact"
   ],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+  },
 
   "javascript.validate.enable": false,
   "javascript.format.enable": false,

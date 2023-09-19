@@ -1,3 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Checkbox,
   FormControlLabel,
@@ -12,7 +15,7 @@ import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 const DISABLED_COLOR = 'rgb(0 0 0 / 38%)';
 
-interface RowState {
+export interface RowState {
   startTime?: Date;
   endTime?: Date;
   first_break?: boolean;
@@ -33,14 +36,15 @@ export interface RowData {
 interface HoursTableRowProps {
   rowData: RowData;
   onHoursChange: (hours: number) => void;
+  onRowStateChange: (rowState: RowState) => void;
 }
 
 export default function HoursTableRow({
   rowData,
   onHoursChange,
+  onRowStateChange,
 }: HoursTableRowProps) {
   const {
-    timestamp,
     shortFormatDate,
     defaultStartTime,
     defaultEndTime,
@@ -67,6 +71,7 @@ export default function HoursTableRow({
   };
 
   useEffect(() => {
+    onRowStateChange(rowState);
     try {
       if (!rowState.startTime || !rowState.endTime) {
         return setTotalHours(0);
@@ -85,7 +90,6 @@ export default function HoursTableRow({
   }, [rowState]);
 
   useEffect(() => {
-    console.log({ totalHours });
     onHoursChange(totalHours);
   }, [totalHours]);
 
