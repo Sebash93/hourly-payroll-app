@@ -35,4 +35,6 @@ export const hoursWithoutBreaks = (
 };
 
 export const SHORT_DATE_FORMAT = 'd/MMM/yy';
+export const DAY_OF_WEEK_FORMAT = 'EEEE';
 export const LARGE_DATE_FORMAT = 'dd MMMM yyyy';
+export const TIME_FORMAT = 'hh:mm aa';

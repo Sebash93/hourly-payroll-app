@@ -25,6 +25,7 @@ import {
   CURRENCY_FORMAT,
   generatePayrollHoursRows,
 } from 'renderer/utils/adapters';
+import config from 'renderer/utils/config';
 import { fromDateToTimestamp } from 'renderer/utils/dates';
 import { useRxCollection } from 'rxdb-hooks';
 import HoursTable from './HoursTable';
@@ -51,6 +52,13 @@ interface Inputs {
   bonus: number;
 }
 
+const defaultValues = {
+  totalHours: {},
+  hourly_rate: config.DEFAULT_COMMON_HOUR_VALUE,
+  holiday_hourly_rate: config.DEFAULT_HOLIDAY_HOUR_VALUE,
+  bonus: config.DEFAULT_BONUS,
+};
+
 export default function PayrollHoursDialog({
   open,
   handleClose,
@@ -68,9 +76,10 @@ export default function PayrollHoursDialog({
     [template]
   );
 
-  const { handleSubmit, control, register, getValues, formState } =
+  const { handleSubmit, control, register, reset, getValues, formState } =
     useForm<Inputs>({
       criteriaMode: 'all',
+      defaultValues,
     });
 
   const collection = useRxCollection(COLLECTION.PAYROLL);
@@ -80,8 +89,16 @@ export default function PayrollHoursDialog({
     const paymentAmount =
       totalHours.common * parseInt(hourly_rate) +
       totalHours.holiday * parseInt(holiday_hourly_rate) +
-      parseInt(bonus);
+      parseInt(bonus ?? '0');
     setPaymentAmount(paymentAmount);
+  };
+
+  const onClose = () => {
+    reset(defaultValues);
+    setTotalHours({});
+    setHoursData({});
+    setPaymentAmount(0);
+    handleClose();
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -115,14 +132,14 @@ export default function PayrollHoursDialog({
 
     try {
       await collection?.upsert(formattedData);
-      handleClose();
+      onClose();
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <Dialog fullWidth maxWidth="xl" open={open} onClose={handleClose}>
+    <Dialog fullWidth maxWidth="xl" open={open} onClose={onClose}>
       <DialogTitle>
         Horas del {startDate} al {endDate}
       </DialogTitle>
@@ -239,7 +256,7 @@ export default function PayrollHoursDialog({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cerrar</Button>
+        <Button onClick={onClose}>Cerrar</Button>
       </DialogActions>
     </Dialog>
   );

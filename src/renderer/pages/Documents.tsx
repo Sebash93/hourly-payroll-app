@@ -19,6 +19,7 @@ import {
   PayrollCollection,
 } from 'renderer/db/db';
 import { print } from 'renderer/utils/files';
+import { PayrollWithEmployees } from 'renderer/utils/types';
 import { useRxData } from 'rxdb-hooks';
 
 interface TabPanelProps {
@@ -50,7 +51,10 @@ function CustomTabPanel(props: TabPanelProps) {
 export default function DocumentsPage() {
   let { templateId } = useParams();
   const [value, setValue] = useState(0);
-  const [template, setTemplate] = useState(false);
+  const [template, setTemplate] = useState(null);
+  const [payrollTotal, setPayrollTotal] = useState(0);
+  const [payrollWithEmployees, setPayrollWithEmployees] =
+    useState<PayrollWithEmployees[]>();
   const { result: payroll, isFetching } = useRxData<PayrollCollection>(
     COLLECTION.PAYROLL,
     (collection) =>
@@ -68,6 +72,23 @@ export default function DocumentsPage() {
     useRxData<TemplateCollection>(COLLECTION.TEMPLATE, (collection) =>
       collection.findOne({ selector: { id: templateId } })
     );
+
+  useEffect(() => {
+    if (!payroll?.length || !employees?.length) return;
+    let newTotal = 0;
+    const newPayroll = payroll.map((payrollItem) => {
+      const employeeInfo = employees.find(
+        (employee) => employee.id === payrollItem.employeeId
+      );
+      newTotal += payrollItem.payment_amount;
+      return {
+        ...payrollItem._data,
+        employee: employeeInfo,
+      };
+    });
+    setPayrollTotal(newTotal);
+    setPayrollWithEmployees(newPayroll);
+  }, [payroll, employees]);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -90,11 +111,7 @@ export default function DocumentsPage() {
       </Typography>
       <Paper>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
-          >
+          <Tabs value={value} onChange={handleChange}>
             <Tab label="Resumen" />
             <Tab label="Comprobantes de pago" />
             <Tab label="Respaldo" />
@@ -127,9 +144,31 @@ export default function DocumentsPage() {
           </Grid>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          {payroll.map((employeePayroll) => (
-            <PayrollReceipt payroll={employeePayroll} />
-          ))}
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Typography
+                variant="h5"
+                sx={{ display: 'flex', justifyContent: 'space-between' }}
+              >
+                Comprobantes de pago
+                <Button
+                  variant="contained"
+                  onClick={() => print('table-toprint')}
+                  endIcon={<LocalPrintshopIcon />}
+                >
+                  Imprimir
+                </Button>
+              </Typography>
+            </Grid>
+            <Grid item xs={12} className="printable">
+              {payrollWithEmployees?.map((employeePayroll) => (
+                <PayrollReceipt
+                  employeePayroll={employeePayroll}
+                  template={template}
+                />
+              ))}
+            </Grid>
+          </Grid>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           Item Three

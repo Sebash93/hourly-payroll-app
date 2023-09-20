@@ -1,3 +1,4 @@
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArticleIcon from '@mui/icons-material/Article';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -8,6 +9,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  Collapse,
   Grid,
   List,
   ListItem,
@@ -27,6 +29,7 @@ interface TemplateItemProps {
   data: TemplateCollection;
   employeesIds: string[];
   employeesData: EmployeeCollection[];
+  index: number;
   onDelete: (id: string) => void;
   onPrint: (id: string) => void;
   onPayrollClick: (id: string) => void;
@@ -39,8 +42,12 @@ export default function TemplateItem({
   onDelete,
   onPrint,
   onPayrollClick,
+  index,
 }: TemplateItemProps) {
   const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
+  const [holidaysOpen, setHolidaysOpen] = useState(index === 0);
+  const [employeesOpen, setEmployeesOpen] = useState(index === 0);
+
   useEffect(() => {
     const employeesList = employeesData.filter((employee) =>
       employeesIds.includes(employee.id)
@@ -60,41 +67,64 @@ export default function TemplateItem({
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography
-              sx={{ fontSize: 14 }}
+              sx={{
+                fontSize: 16,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                ':hover': {
+                  cursor: 'pointer',
+                },
+              }}
               color="text.secondary"
               gutterBottom
+              onClick={() => setHolidaysOpen(!holidaysOpen)}
             >
-              Dias Festivos
+              Dias Festivos {holidaysOpen! ? <ExpandLess /> : <ExpandMore />}
             </Typography>
-            <List dense>
-              {data?.holidays?.map((holiday) => (
-                <ListItem key={holiday}>
-                  <ListItemIcon>
-                    <WbSunnyIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={fromTimestampToHumanDate(holiday)} />
-                </ListItem>
-              ))}
-            </List>
+            <Collapse in={holidaysOpen} timeout="auto" unmountOnExit>
+              <List component="div" dense>
+                {data?.holidays?.map((holiday) => (
+                  <ListItem key={holiday}>
+                    <ListItemIcon>
+                      <WbSunnyIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={fromTimestampToHumanDate(holiday)} />
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
           </Grid>
           <Grid item xs={12}>
             <Typography
-              sx={{ fontSize: 14 }}
+              sx={{
+                fontSize: 16,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                ':hover': {
+                  cursor: 'pointer',
+                },
+              }}
               color="text.secondary"
               gutterBottom
+              onClick={() => setEmployeesOpen(!employeesOpen)}
             >
               Empleados ({employeesIds?.length})
+              {employeesOpen! ? <ExpandLess /> : <ExpandMore />}
             </Typography>
-            <List dense>
-              {employees.map((employee) => (
-                <ListItem key={employee.id}>
-                  <ListItemIcon>
-                    <PersonIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={employee.name} />
-                </ListItem>
-              ))}
-            </List>
+            <Collapse in={employeesOpen} timeout="auto" unmountOnExit>
+              <List component="div" dense>
+                {employees.map((employee) => (
+                  <ListItem key={employee.id}>
+                    <ListItemIcon>
+                      <PersonIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={employee.name} />
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
           </Grid>
         </Grid>
       </CardContent>
@@ -103,6 +133,7 @@ export default function TemplateItem({
           onClick={() => onDelete(data.id)}
           size="small"
           color="error"
+          disabled
           endIcon={<DeleteOutlineIcon />}
         >
           Borrar

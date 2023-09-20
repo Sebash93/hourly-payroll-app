@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable import/prefer-default-export */
 import {
   isSaturday as checkIsSaturday,
@@ -9,8 +10,14 @@ import {
   setMinutes,
   toDate,
 } from 'date-fns';
-import { TemplateCollection } from '../db/db';
-import { SHORT_DATE_FORMAT } from './dates';
+import { PayrollHours, TemplateCollection } from '../db/db';
+import {
+  DAY_OF_WEEK_FORMAT,
+  SHORT_DATE_FORMAT,
+  TIME_FORMAT,
+  fromTimestampToDate,
+  hoursWithoutBreaks,
+} from './dates';
 
 export const CURRENCY_FORMAT = {
   separator: '.',
@@ -46,6 +53,31 @@ export const generatePayrollHoursRows = (template: TemplateCollection) => {
       isSunday,
       isSaturday,
       isHoliday,
+    };
+  });
+};
+
+export const generatePayrollHoursReceiptModel = (
+  payrollHours: Record<string, PayrollHours>
+) => {
+  return Object.keys(payrollHours).map((key) => {
+    const { first_break, second_break } = payrollHours[key];
+    const startDate = fromTimestampToDate(payrollHours[key].startTime);
+    const endDate = fromTimestampToDate(payrollHours[key].endTime);
+    const descansos = [first_break && 'D', second_break && 'A'];
+    return {
+      id: key,
+      day: format(
+        new Date(parseInt(key)),
+        `${SHORT_DATE_FORMAT} ${DAY_OF_WEEK_FORMAT}`
+      ),
+      startTime: format(startDate, TIME_FORMAT),
+      endTime: format(endDate, TIME_FORMAT),
+      hours: hoursWithoutBreaks(
+        { startTime: startDate, endTime: endDate },
+        { firstBreak: first_break, secondBreak: second_break }
+      ),
+      descansos: descansos.filter(Boolean).join(' y '),
     };
   });
 };

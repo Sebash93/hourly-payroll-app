@@ -11,6 +11,7 @@ import initialize from './db/db';
 import DocumentsPage from './pages/Documents';
 import PayrollPage from './pages/Payroll';
 import TemplatePage from './pages/Template';
+import './print.css';
 import snackbarReducer, { snackbarInitialState } from './store/snackbar';
 import theme from './theme/theme';
 
@@ -67,11 +68,11 @@ export default function App() {
           </RxDbProvider>
         </ThemeProvider>
         <iframe
+          src="./print.html"
           name="print_frame"
           title="print_frame"
           width="0"
           height="0"
-          src="about:blank"
         />
       </LocalizationProvider>
     </Router>

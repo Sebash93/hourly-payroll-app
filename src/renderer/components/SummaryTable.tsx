@@ -15,6 +15,7 @@ import {
   PayrollCollection,
   TemplateCollection,
 } from 'renderer/db/db';
+import theme from 'renderer/theme/theme';
 import { CURRENCY_FORMAT } from 'renderer/utils/adapters';
 import { LARGE_DATE_FORMAT } from 'renderer/utils/dates';
 
@@ -22,10 +23,6 @@ interface SummaryTableProps {
   payrollData: PayrollCollection[];
   employeesData: EmployeeCollection[];
   templateData: TemplateCollection;
-}
-
-interface PayrollWithEmployees extends PayrollCollection {
-  employee: EmployeeCollection;
 }
 
 export default function SummaryTable({
@@ -56,71 +53,94 @@ export default function SummaryTable({
 
   if (!payrollWithEmployees?.length) return <CircularProgress />;
   return (
-    <TableContainer id="table-toprint">
+    <TableContainer className="printable">
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell colSpan={10} align="center">
+            <TableCell
+              sx={{ backgroundColor: theme.palette.grey[300] }}
+              colSpan={10}
+              align="center"
+            >
               Nómina del periodo del{' '}
-              {format(new Date(templateData.start_date), LARGE_DATE_FORMAT)} al{' '}
-              {format(new Date(templateData.end_date), LARGE_DATE_FORMAT)}
+              <b>
+                {format(new Date(templateData.start_date), LARGE_DATE_FORMAT)}
+              </b>{' '}
+              al{' '}
+              <b>
+                {format(new Date(templateData.end_date), LARGE_DATE_FORMAT)}
+              </b>
             </TableCell>
           </TableRow>
-          <TableRow>
-            <TableCell>No.</TableCell>
+          <TableRow sx={{ backgroundColor: theme.palette.grey[200] }}>
+            <TableCell sx={{ textAlign: 'center' }}>No.</TableCell>
             <TableCell>Nombre</TableCell>
-            <TableCell>Total</TableCell>
-            <TableCell>Horas Comun</TableCell>
-            <TableCell>Valor Hora</TableCell>
-            <TableCell>Total</TableCell>
-            <TableCell>Horas Festivo</TableCell>
-            <TableCell>Valor Hora</TableCell>
-            <TableCell>Total</TableCell>
-            <TableCell>Bonificación</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              <b>Total</b>
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Horas Comun</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Valor Hora</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Total</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Horas Festivo</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Valor Hora</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Total</TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>Bonificación</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {payrollWithEmployees.map((payroll, index) => {
             return (
               <TableRow key={payroll.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
                 <TableCell>{payroll.employee.name}</TableCell>
-                <TableCell>
-                  {currency(payroll.payment_amount, CURRENCY_FORMAT).format()}
+                <TableCell sx={{ textAlign: 'center' }}>
+                  <b>
+                    {currency(payroll.payment_amount, CURRENCY_FORMAT).format()}
+                  </b>
                 </TableCell>
-                <TableCell>{payroll.total_common_hours}</TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
+                  {payroll.total_common_hours}
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
                   {currency(payroll.hourly_rate, CURRENCY_FORMAT).format()}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
                   {currency(
                     payroll.total_common_hours * payroll.hourly_rate,
                     CURRENCY_FORMAT
                   ).format()}
                 </TableCell>
-                <TableCell>{payroll.total_holiday_hours}</TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
+                  {payroll.total_holiday_hours}
+                </TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
                   {currency(
                     payroll.holiday_hourly_rate,
                     CURRENCY_FORMAT
                   ).format()}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
                   {currency(
                     payroll.total_holiday_hours * payroll.holiday_hourly_rate,
                     CURRENCY_FORMAT
                   ).format()}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: 'center' }}>
                   {currency(payroll.bonus, CURRENCY_FORMAT).format()}
                 </TableCell>
               </TableRow>
             );
           })}
-          <TableRow>
-            <TableCell colSpan={2}>Total Empleados</TableCell>
-            <TableCell colSpan={9}>
-              {currency(total, CURRENCY_FORMAT).format()}
+          <TableRow
+            sx={{
+              backgroundColor: theme.palette.grey[300],
+            }}
+          >
+            <TableCell colSpan={2}>
+              <b>TOTAL EMPLEADOS</b>
+            </TableCell>
+            <TableCell sx={{ textAlign: 'center' }}>
+              <b>{currency(total, CURRENCY_FORMAT).format()}</b>
             </TableCell>
           </TableRow>
         </TableBody>

@@ -27,8 +27,8 @@ export interface TemplateCollection {
 }
 
 export interface PayrollHours {
-  start_time: number;
-  end_time: number;
+  startTime: number;
+  endTime: number;
   first_break: boolean;
   second_break: boolean;
 }

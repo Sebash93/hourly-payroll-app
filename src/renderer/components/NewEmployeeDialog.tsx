@@ -21,35 +21,35 @@ type Inputs = {
   phone: string;
 };
 
+const defaultValues = {
+  name: '',
+  address: '',
+  city: '',
+  id: '',
+  phone: '',
+};
+
 export default function NewEmployeeDialog() {
   const [open, setOpen] = useState(false);
   const collection = useRxCollection(COLLECTION.EMPLOYEE);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<Inputs>();
+  const { register, handleSubmit, reset } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     await collection?.upsert(data);
-    reset();
+    reset(defaultValues);
     setOpen(false);
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
+
   return (
     <div>
       <Button
         variant="outlined"
-        onClick={handleClickOpen}
+        onClick={() => setOpen(true)}
         startIcon={<AddIcon />}
         size="small"
         sx={{ mt: 1 }}
