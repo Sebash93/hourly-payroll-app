@@ -16,6 +16,7 @@ import {
   EmployeeCollection,
   TemplateCollection,
 } from 'renderer/db/db';
+import { usePayrollStore } from 'renderer/store/store';
 import { SHORT_DATE_FORMAT } from 'renderer/utils/dates';
 import { useRxData } from 'rxdb-hooks';
 
@@ -27,6 +28,10 @@ export default function PayrollPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeCollection>(
     {}
   );
+
+  // has payroll
+  const { result: templatePayroll, isFetching: isFetchingTemplatePayroll } =
+    usePayrollStore(templateId);
 
   // employess state
   const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
@@ -75,7 +80,8 @@ export default function PayrollPage() {
                 <Button
                   variant="contained"
                   endIcon={<ArticleIcon />}
-                  onClick={() => navigate(`/payroll/${template.id}/documents`)}
+                  disabled={!templatePayroll.length}
+                  onClick={() => navigate(`/payroll/documents/${template.id}`)}
                 >
                   Documentos
                 </Button>

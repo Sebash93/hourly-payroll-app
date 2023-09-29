@@ -1,3 +1,4 @@
+import config from 'renderer/utils/config';
 import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
@@ -50,7 +51,7 @@ addRxPlugin(RxDBDevModePlugin);
 
 export default async function initialize() {
   const db = await createRxDatabase({
-    name: 'test5',
+    name: config.DB_NAME,
     storage: getRxStorageDexie(),
     ignoreDuplicate: true,
   });

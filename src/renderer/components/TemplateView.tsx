@@ -1,19 +1,10 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { COLLECTION, TemplateCollection } from 'renderer/db/db';
-import config from 'renderer/utils/config';
-import { useRxData } from 'rxdb-hooks';
+import { useAugmentedTemplateStore } from 'renderer/store/store';
 import TemplateItem from './TemplateItem';
 
-export default function TemplateView({ employees }) {
-  const { result: templates, isFetching } = useRxData<TemplateCollection>(
-    COLLECTION.TEMPLATE,
-    (collection) =>
-      collection.find({
-        sort: [{ start_date: 'desc' }],
-        limit: config.MAX_TEMPLATES_IN_VIEW,
-      })
-  );
+export default function TemplateView() {
+  const { result: templatesAugmentedData } = useAugmentedTemplateStore();
 
   const navigate = useNavigate();
 
@@ -22,7 +13,7 @@ export default function TemplateView({ employees }) {
   };
 
   const handleDocumentsClick = (id: string) => {
-    navigate(`payroll/${id}/documents`);
+    navigate(`payroll/documents/${id}`);
   };
 
   return (
@@ -31,13 +22,11 @@ export default function TemplateView({ employees }) {
         Planillas
       </Typography>
       <Grid container spacing={4}>
-        {templates.map((template, index) => (
+        {templatesAugmentedData.map((template, index) => (
           <Grid key={template.id} item lg={3} md={4} sm={6} xs={12}>
             <TemplateItem
               index={index}
               data={template}
-              employeesIds={template.employees}
-              employeesData={employees}
               onPrint={handleDocumentsClick}
               onDelete={() => {}}
               onPayrollClick={handlePayrollClick}

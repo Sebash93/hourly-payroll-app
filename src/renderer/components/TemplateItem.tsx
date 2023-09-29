@@ -18,17 +18,15 @@ import {
   Typography,
 } from '@mui/material';
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
-import { EmployeeCollection, TemplateCollection } from 'renderer/db/db';
+import { useState } from 'react';
+import { AugementedTemplate } from 'renderer/store/store';
 import {
   SHORT_DATE_FORMAT,
   fromTimestampToHumanDate,
 } from 'renderer/utils/dates';
 
 interface TemplateItemProps {
-  data: TemplateCollection;
-  employeesIds: string[];
-  employeesData: EmployeeCollection[];
+  data: AugementedTemplate;
   index: number;
   onDelete: (id: string) => void;
   onPrint: (id: string) => void;
@@ -37,23 +35,13 @@ interface TemplateItemProps {
 
 export default function TemplateItem({
   data,
-  employeesIds,
-  employeesData,
   onDelete,
   onPrint,
   onPayrollClick,
   index,
 }: TemplateItemProps) {
-  const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
   const [holidaysOpen, setHolidaysOpen] = useState(index === 0);
   const [employeesOpen, setEmployeesOpen] = useState(index === 0);
-
-  useEffect(() => {
-    const employeesList = employeesData.filter((employee) =>
-      employeesIds.includes(employee.id)
-    );
-    setEmployees(employeesList);
-  }, [employeesIds, employeesData]);
 
   return (
     <Card sx={{ p: 1 }}>
@@ -110,12 +98,12 @@ export default function TemplateItem({
               gutterBottom
               onClick={() => setEmployeesOpen(!employeesOpen)}
             >
-              Empleados ({employeesIds?.length})
+              Empleados ({data.employees?.length})
               {employeesOpen! ? <ExpandLess /> : <ExpandMore />}
             </Typography>
             <Collapse in={employeesOpen} timeout="auto" unmountOnExit>
               <List component="div" dense>
-                {employees.map((employee) => (
+                {data.employeesData.map((employee) => (
                   <ListItem key={employee.id}>
                     <ListItemIcon>
                       <PersonIcon />
@@ -143,6 +131,7 @@ export default function TemplateItem({
           size="small"
           variant="outlined"
           endIcon={<ArticleIcon />}
+          disabled={!data.hasPayrollData}
         >
           Documentos
         </Button>

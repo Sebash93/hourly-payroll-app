@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react-hooks/exhaustive-deps */
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import {
   Checkbox,
   FormControlLabel,
@@ -11,7 +12,6 @@ import {
 import { TimePicker } from '@mui/x-date-pickers';
 import { useEffect, useState } from 'react';
 import { hoursWithoutBreaks } from 'renderer/utils/dates';
-import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 const DISABLED_COLOR = 'rgb(0 0 0 / 38%)';
 
@@ -114,7 +114,11 @@ export default function HoursTableRow({
       <TableCell>
         <Checkbox onChange={handleDisableChange} />
       </TableCell>
-      <TableCell sx={{ color: isDiabled ? DISABLED_COLOR : 'inherit' }}>
+      <TableCell
+        sx={{
+          color: isDiabled ? DISABLED_COLOR : 'inherit',
+        }}
+      >
         {shortFormatDate}
       </TableCell>
       <TableCell sx={{ color: isDiabled ? DISABLED_COLOR : 'inherit' }}>
@@ -123,6 +127,7 @@ export default function HoursTableRow({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            textTransform: 'capitalize',
           }}
         >
           {dayOfWeek}

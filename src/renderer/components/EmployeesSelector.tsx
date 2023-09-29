@@ -57,20 +57,21 @@ export default function EmployeesSelector({
         gridTemplateColumns: 'repeat(2, 1fr)',
       }}
     >
-      {employees?.length &&
-        employees.map(({ name, id, checkedByDefault }) => (
-          <FormControlLabel
-            key={id}
-            control={
-              <Checkbox
-                id={id}
-                defaultChecked={checkedByDefault}
-                onChange={(e) => handleCheckboxChange(e)}
-              />
-            }
-            label={name}
-          />
-        ))}
+      {employees?.length
+        ? employees.map(({ name, id, checkedByDefault }) => (
+            <FormControlLabel
+              key={id}
+              control={
+                <Checkbox
+                  id={id}
+                  defaultChecked={checkedByDefault}
+                  onChange={(e) => handleCheckboxChange(e)}
+                />
+              }
+              label={name}
+            />
+          ))
+        : null}
     </FormGroup>
   );
 }

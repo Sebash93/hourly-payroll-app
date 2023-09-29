@@ -4,6 +4,7 @@ const config = {
   DEFAULT_COMMON_HOUR_VALUE: 5000,
   DEFAULT_HOLIDAY_HOUR_VALUE: 7000,
   DEFAULT_BONUS: 0,
+  DB_NAME: 'db',
   COMPANY_INFO: {
     city: 'Itagüí',
     payrollDetail: 'Servicio de confección',

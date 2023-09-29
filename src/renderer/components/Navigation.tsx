@@ -1,52 +1,34 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PostAddIcon from '@mui/icons-material/PostAdd';
-import { Box, Breadcrumbs, Link, Typography } from '@mui/material';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Box, Breadcrumbs, Typography } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const drawerWidth = 180;
+const getPaths = (currentPath) => {
+  const paths = currentPath.split('/');
+  if (paths.length > 1) {
+    const id = paths.pop();
+    return paths.map((path: string) => {
+      if (path === 'payroll') {
+        return {
+          url: `payroll/${id}`,
+          name: 'Horas',
+        };
+      }
+      if (path === 'documents') {
+        return {
+          url: `payroll/documents/${id}`,
+          name: 'Documentos',
+        };
+      }
+      return null;
+    });
+  }
 
-const MenuData = [
-  {
-    name: 'Plantilla',
-    icon: <PostAddIcon />,
-    route: '/template',
-  },
-  {
-    name: 'Nómina',
-    icon: <AccessTimeIcon />,
-    route: '/payroll/:templateId',
-  },
-  {
-    name: 'Documentos',
-    icon: <AccessTimeIcon />,
-    route: '/documents/:templateId',
-  },
-];
-
-const getPathsWithRoutes = (path, templateId) => {
-  const paths = path.split('/');
-  return paths.map((currentPath) => {
-    if (currentPath === 'payroll') {
-      return {
-        name: 'Nómina',
-        url: `/payroll/${templateId}`,
-      };
-    }
-    if (currentPath === 'documents') {
-      return {
-        name: 'Documentos',
-        url: `/payroll/${templateId}/documents`,
-      };
-    }
-    return '';
-  });
+  return [];
 };
 
 export default function Navigation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { templateId } = useParams();
-  const paths = getPathsWithRoutes(location.pathname, templateId);
+  const paths = getPaths(location.pathname);
 
   function handleNavigate(route: string) {
     navigate(route);
@@ -65,24 +47,18 @@ export default function Navigation() {
         Nomina Línea GM
       </Typography>
       <Breadcrumbs sx={{ flexGrow: 1 }} aria-label="breadcrumb">
-        <Link underline="hover" color="inherit" href="/">
+        <button type="button" onClick={() => navigate('/')}>
           Planillas
-        </Link>
-        {paths.map((path) => {
-          if (path === '') {
-            return '';
-          }
-          return (
-            <Link
-              key={path.name}
-              underline="hover"
-              color="inherit"
-              href={path.url}
-            >
+        </button>
+        {paths?.map((path) =>
+          path ? (
+            <button type="button" onClick={() => navigate(path.url)}>
               {path.name}
-            </Link>
-          );
-        })}
+            </button>
+          ) : (
+            ''
+          )
+        )}
       </Breadcrumbs>
     </Box>
   );
