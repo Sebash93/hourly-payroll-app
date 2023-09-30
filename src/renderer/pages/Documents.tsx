@@ -14,13 +14,12 @@ import { useParams } from 'react-router-dom';
 import PayrollReceipt from 'renderer/components/PayrollReceipt';
 import SummaryTable from 'renderer/components/SummaryTable';
 import {
-  COLLECTION,
-  EmployeeCollection,
-  PayrollCollection,
-} from 'renderer/db/db';
+  useEmployeeStore,
+  useOneTemplateStore,
+  usePayrollStore,
+} from 'renderer/store/store';
 import { print } from 'renderer/utils/files';
 import { PayrollWithEmployees } from 'renderer/utils/types';
-import { useRxData } from 'rxdb-hooks';
 
 interface TabPanelProps {
   children: ReactNode;
@@ -55,23 +54,13 @@ export default function DocumentsPage() {
   const [payrollTotal, setPayrollTotal] = useState(0);
   const [payrollWithEmployees, setPayrollWithEmployees] =
     useState<PayrollWithEmployees[]>();
-  const { result: payroll, isFetching } = useRxData<PayrollCollection>(
-    COLLECTION.PAYROLL,
-    (collection) =>
-      collection.find({
-        selector: { templateId },
-      })
-  );
+  const { result: payroll, isFetching } = usePayrollStore(templateId);
 
-  const { result: employees, isFetchingEmployees } =
-    useRxData<EmployeeCollection>(COLLECTION.EMPLOYEE, (collection) =>
-      collection.find({})
-    );
+  const { result: employees, isFetching: isFetchingEmployees } =
+    useEmployeeStore();
 
-  const { result: templates, isFetchingTemplate } =
-    useRxData<TemplateCollection>(COLLECTION.TEMPLATE, (collection) =>
-      collection.findOne({ selector: { id: templateId } })
-    );
+  const { result: templates, isFetching: isFetchingTemplate } =
+    useOneTemplateStore(templateId);
 
   useEffect(() => {
     if (!payroll?.length || !employees?.length) return;

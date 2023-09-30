@@ -19,6 +19,12 @@ export const usePayrollStore = (templateId?: string) => {
   );
 };
 
+export const useOneTemplateStore = (templateId?: string) => {
+  return useRxData<TemplateCollection>(COLLECTION.TEMPLATE, (collection) =>
+    collection.findOne({ selector: { id: templateId } })
+  );
+};
+
 export const useTemplateStore = (limit: number = 0) => {
   return useRxData<TemplateCollection>(COLLECTION.TEMPLATE, (collection) =>
     collection.find({

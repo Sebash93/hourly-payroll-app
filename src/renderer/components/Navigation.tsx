@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Button, Typography } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const getPaths = (currentPath) => {
@@ -47,14 +47,14 @@ export default function Navigation() {
         Nomina Línea GM
       </Typography>
       <Breadcrumbs sx={{ flexGrow: 1 }} aria-label="breadcrumb">
-        <button type="button" onClick={() => navigate('/')}>
+        <Button variant="text" onClick={() => navigate('/')}>
           Planillas
-        </button>
+        </Button>
         {paths?.map((path) =>
           path ? (
-            <button type="button" onClick={() => navigate(path.url)}>
+            <Button variant="text" onClick={() => navigate(path.url)}>
               {path.name}
-            </button>
+            </Button>
           ) : (
             ''
           )

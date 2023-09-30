@@ -14,11 +14,12 @@ import EmployeesSelector from 'renderer/components/EmployeesSelector';
 import HolidaySelector from 'renderer/components/HolidaySelector';
 import NewEmployeeDialog from 'renderer/components/NewEmployeeDialog';
 import TemplateView from 'renderer/components/TemplateView';
-import { COLLECTION, EmployeeCollection } from 'renderer/db/db';
+import { COLLECTION } from 'renderer/db/db';
 import { SnackbarAction } from 'renderer/store/snackbar';
+import { useEmployeeStore } from 'renderer/store/store';
 import { fromDateToTimestamp } from 'renderer/utils/dates';
 import { noEmptyArray } from 'renderer/utils/validations';
-import { useRxCollection, useRxData } from 'rxdb-hooks';
+import { useRxCollection } from 'rxdb-hooks';
 
 type Inputs = {
   start_date: number;
@@ -32,14 +33,7 @@ export default function TemplatePage({
 }: {
   snackbarDispatcher: Dispatch<SnackbarAction>;
 }) {
-  const { result: employees, isFetching } = useRxData<EmployeeCollection>(
-    COLLECTION.EMPLOYEE,
-    (collection) =>
-      collection.find({
-        selector: {},
-        sort: [{ checkedByDefault: 'asc' }],
-      })
-  );
+  const { result: employees, isFetching } = useEmployeeStore();
   const collection = useRxCollection(COLLECTION.TEMPLATE);
 
   const {
@@ -129,6 +123,7 @@ export default function TemplatePage({
                 <DatePicker
                   sx={{ marginRight: '16px' }}
                   label="Fecha inicial"
+                  format="dd/MM/yyyy"
                   slotProps={{
                     textField: {
                       size: 'small',
@@ -149,6 +144,7 @@ export default function TemplatePage({
               render={({ field }) => (
                 <DatePicker
                   label="Fecha final"
+                  format="dd/MM/yyyy"
                   slotProps={{
                     textField: {
                       size: 'small',

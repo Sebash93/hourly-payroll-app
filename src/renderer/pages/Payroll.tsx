@@ -11,14 +11,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import EmployeeCard from 'renderer/components/EmployeeCard';
 import PayrollHoursDialog from 'renderer/components/PayrollHoursDialog';
-import {
-  COLLECTION,
-  EmployeeCollection,
-  TemplateCollection,
-} from 'renderer/db/db';
-import { usePayrollStore } from 'renderer/store/store';
+import { EmployeeCollection, TemplateCollection } from 'renderer/db/db';
+import { useOneTemplateStore, usePayrollStore } from 'renderer/store/store';
 import { SHORT_DATE_FORMAT } from 'renderer/utils/dates';
-import { useRxData } from 'rxdb-hooks';
 
 export default function PayrollPage() {
   let { templateId } = useParams();
@@ -38,10 +33,7 @@ export default function PayrollPage() {
   const [template, setTemplate] = useState<TemplateCollection>(null);
 
   // Load templates
-  const { result: templates, isFetching } = useRxData<TemplateCollection>(
-    COLLECTION.TEMPLATE,
-    (collection) => collection.findOne({ selector: { id: templateId } })
-  );
+  const { result: templates, isFetching } = useOneTemplateStore(templateId);
 
   // Load employees
   useEffect(() => {

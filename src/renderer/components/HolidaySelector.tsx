@@ -69,6 +69,7 @@ export default function HolidaySelector({ onChange }: HolidaySelectorProps) {
       <DatePicker
         defaultValue={null}
         label="Agrega un dia festivo"
+        format="dd/MM/yyyy"
         slotProps={{
           textField: {
             size: 'small',

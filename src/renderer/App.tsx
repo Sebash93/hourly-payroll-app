@@ -18,16 +18,12 @@ import RoutesList from './routes';
 import snackbarReducer, { snackbarInitialState } from './store/snackbar';
 import theme from './theme/theme';
 
-const setupDateFns = () => {
-  setDefaultOptions({ locale: es });
-};
-
 export default function App() {
   const [db, setDb] = useState<any>();
 
   useEffect(() => {
     // Config dateFns
-    setupDateFns();
+    setDefaultOptions({ locale: es });
     // RxDB instantiation can be asynchronous
     initialize()
       .then(setDb)
