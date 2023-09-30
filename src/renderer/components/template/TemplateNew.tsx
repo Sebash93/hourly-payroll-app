@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { COLLECTION, EmployeeCollection } from 'renderer/db/db';
+import { COLLECTION, EmployeeCollection } from 'renderer/db';
 import { fromDateToTimestamp } from 'renderer/utils/dates';
 import { noEmptyArray } from 'renderer/utils/validations';
 import { useRxCollection } from 'rxdb-hooks';

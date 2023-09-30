@@ -5,11 +5,21 @@ import {
   EmployeeCollection,
   PayrollCollection,
   TemplateCollection,
-} from 'renderer/db/db';
+} from 'renderer/db';
 import { useRxData } from 'rxdb-hooks';
 
 const isFetchingSomething = (...args: boolean[]) => {
   return args.some((a) => a);
+};
+
+export const useOnePayrollStore = (payrollId?: string) => {
+  const res = useRxData<PayrollCollection>(COLLECTION.PAYROLL, (collection) =>
+    collection.findOne({ selector: { id: payrollId } })
+  );
+  return {
+    ...res,
+    result: res.result[0],
+  };
 };
 
 export const usePayrollStore = (templateId?: string) => {

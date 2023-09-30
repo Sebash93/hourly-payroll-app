@@ -12,7 +12,7 @@ import PayrollPage from './components/payroll/Payroll';
 import Global from './components/shared/Global';
 import Navigation from './components/shared/Navigation';
 import TemplatePage from './components/template/Template';
-import initialize from './db/db';
+import initialize from './db';
 import './print.css';
 import { ROUTES, RoutePath } from './routes';
 import snackbarReducer, { snackbarInitialState } from './store/snackbar';

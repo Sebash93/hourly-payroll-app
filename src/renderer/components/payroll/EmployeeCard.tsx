@@ -9,10 +9,8 @@ import {
   Typography,
 } from '@mui/material';
 import currency from 'currency.js';
-import { useEffect, useState } from 'react';
-import { COLLECTION, PayrollCollection } from 'renderer/db/db';
+import { useOnePayrollStore } from 'renderer/store/store';
 import { CURRENCY_FORMAT } from 'renderer/utils/adapters';
-import { useRxData } from 'rxdb-hooks';
 
 interface EmployeeCardProps {
   id: string;
@@ -27,22 +25,7 @@ export default function EmployeeCard({
   templateId,
   onClick,
 }: EmployeeCardProps) {
-  const { result: payroll, isFetching } = useRxData<PayrollCollection>(
-    COLLECTION.PAYROLL,
-    (collection) =>
-      collection.findOne({
-        selector: { id: `${id}-${templateId}` },
-      })
-  );
-
-  const [payrollData, setPayrollData] = useState<PayrollCollection>(null);
-
-  useEffect(() => {
-    if (payroll?.length) {
-      setPayrollData(payroll[0]);
-    }
-  }, [payroll]);
-
+  const { result: payroll } = useOnePayrollStore(`${id}-${templateId}`);
   return (
     <Card variant="outlined">
       <CardContent>
@@ -50,24 +33,24 @@ export default function EmployeeCard({
           Resumen de horas de
         </Typography>
         <Typography variant="h5" component="div">
-          {name} {payrollData ? <DoneIcon color="success" /> : ''}
+          {name} {payroll ? <DoneIcon color="success" /> : ''}
         </Typography>
         <div>
-          Horas comun: {payrollData?.total_common_hours}
+          Horas comun: {payroll?.total_common_hours}
           <br />
-          Horas festivo: {payrollData?.total_common_hours}
+          Horas festivo: {payroll?.total_common_hours}
           <Divider sx={{ mt: 2 }} /> Pago Total:{' '}
-          {currency(payrollData?.payment_amount, CURRENCY_FORMAT).format()}
+          {currency(payroll?.payment_amount, CURRENCY_FORMAT).format()}
         </div>
       </CardContent>
       <CardActions>
         <Button
-          color={payrollData ? 'success' : 'primary'}
+          color={payroll ? 'success' : 'primary'}
           onClick={onClick}
           size="small"
           endIcon={<AccessAlarmsIcon />}
         >
-          {payrollData ? 'Modificar' : 'Diligenciar'} Horas
+          {payroll ? 'Modificar' : 'Diligenciar'} Horas
         </Button>
       </CardActions>
     </Card>

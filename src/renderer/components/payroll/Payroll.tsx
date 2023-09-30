@@ -9,7 +9,7 @@ import {
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { EmployeeCollection, TemplateCollection } from 'renderer/db/db';
+import { EmployeeCollection, TemplateCollection } from 'renderer/db';
 import { ROUTES, getPath } from 'renderer/routes';
 import { useOneTemplateStore, usePayrollStore } from 'renderer/store/store';
 import { SHORT_DATE_FORMAT } from 'renderer/utils/dates';
@@ -17,20 +17,17 @@ import EmployeeCard from './EmployeeCard';
 import PayrollHoursDialog from './PayrollHoursDialog';
 
 export default function PayrollPage() {
-  let { templateId } = useParams();
+  const { templateId } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeCollection>(
     {}
   );
-  const { result: templatePayroll, isFetching: isFetchingTemplatePayroll } =
-    usePayrollStore(templateId);
+  const { result: templatePayroll } = usePayrollStore(templateId);
+  const { result: templates, isFetching } = useOneTemplateStore(templateId);
 
   const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
   const [template, setTemplate] = useState<TemplateCollection>(null);
-
-  // Load templates
-  const { result: templates, isFetching } = useOneTemplateStore(templateId);
 
   // Load employees
   useEffect(() => {

@@ -10,7 +10,7 @@ import {
   setMinutes,
   toDate,
 } from 'date-fns';
-import { PayrollHours, TemplateCollection } from '../db/db';
+import { PayrollHours, TemplateCollection } from '../db';
 import {
   DAY_OF_WEEK_FORMAT,
   SHORT_DATE_FORMAT,

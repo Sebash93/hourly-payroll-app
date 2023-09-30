@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import currency from 'currency.js';
 import { format } from 'date-fns';
-import { TemplateCollection } from 'renderer/db/db';
+import { TemplateCollection } from 'renderer/db';
 import {
   CURRENCY_FORMAT,
   generatePayrollHoursReceiptModel,

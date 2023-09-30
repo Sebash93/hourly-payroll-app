@@ -20,7 +20,7 @@ import {
   EmployeeCollection,
   PayrollCollection,
   TemplateCollection,
-} from 'renderer/db/db';
+} from 'renderer/db';
 import {
   CURRENCY_FORMAT,
   generatePayrollHoursRows,

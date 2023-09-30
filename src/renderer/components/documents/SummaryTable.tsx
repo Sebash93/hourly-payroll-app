@@ -14,7 +14,7 @@ import {
   EmployeeCollection,
   PayrollCollection,
   TemplateCollection,
-} from 'renderer/db/db';
+} from 'renderer/db';
 import theme from 'renderer/theme/theme';
 import { CURRENCY_FORMAT } from 'renderer/utils/adapters';
 import { LARGE_DATE_FORMAT } from 'renderer/utils/dates';

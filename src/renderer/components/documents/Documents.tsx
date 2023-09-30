@@ -48,7 +48,7 @@ function CustomTabPanel(props: TabPanelProps) {
 }
 
 export default function DocumentsPage() {
-  let { templateId } = useParams();
+  const { templateId } = useParams();
   const [value, setValue] = useState(0);
   const [template, setTemplate] = useState(null);
   const [payrollTotal, setPayrollTotal] = useState(0);

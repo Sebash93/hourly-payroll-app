@@ -11,7 +11,7 @@ import {
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useRxCollection } from 'rxdb-hooks';
-import { COLLECTION } from '../../db/db';
+import { COLLECTION } from '../../db';
 
 type FormInputs = {
   name: string;

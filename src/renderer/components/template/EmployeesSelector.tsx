@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { EmployeeCollection } from 'renderer/db/db';
+import { EmployeeCollection } from 'renderer/db';
 
 interface EmployeesSelectorProps {
   employees: EmployeeCollection[];
