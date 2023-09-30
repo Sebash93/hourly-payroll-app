@@ -14,9 +14,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useState } from 'react';
 import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import CheckIcon from '@mui/icons-material/Check';
+import { useState } from 'react';
 import HoursTableRow, { RowData } from './HoursTableRow';
 
 interface HoursTableProps {

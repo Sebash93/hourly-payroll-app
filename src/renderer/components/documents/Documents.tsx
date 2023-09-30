@@ -11,8 +11,8 @@ import {
 } from '@mui/material';
 import { ReactNode, SyntheticEvent, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import PayrollReceipt from 'renderer/components/PayrollReceipt';
-import SummaryTable from 'renderer/components/SummaryTable';
+import PayrollReceipt from 'renderer/components/documents/PayrollReceipt';
+import SummaryTable from 'renderer/components/documents/SummaryTable';
 import {
   useEmployeeStore,
   useOneTemplateStore,

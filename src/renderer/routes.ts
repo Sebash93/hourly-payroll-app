@@ -1,11 +1,16 @@
-const Routes = {
-  root: '/',
-  payroll: 'payroll/:templateId',
-  documents: 'payroll/documents/:templateId',
+export enum ROUTES {
+  ROOT,
+  PAYROLL,
+  DOCUMENTS,
+}
+
+export const RoutePath = {
+  [ROUTES.ROOT]: '/',
+  [ROUTES.PAYROLL]: '/payroll/:templateId',
+  [ROUTES.DOCUMENTS]: '/payroll/documents/:templateId',
 };
 
-export const getRoute = (route: string, templateId: string) => {
-  return route.replace(':templateId', templateId);
+export const getPath = (route: ROUTES, templateId: string) => {
+  const path = RoutePath[route];
+  return path.replace(':templateId', templateId);
 };
-
-export default Routes;

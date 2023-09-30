@@ -11,9 +11,9 @@ import {
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useRxCollection } from 'rxdb-hooks';
-import { COLLECTION } from '../db/db';
+import { COLLECTION } from '../../db/db';
 
-type Inputs = {
+type FormInputs = {
   name: string;
   address: string;
   city: string;
@@ -33,9 +33,9 @@ export default function NewEmployeeDialog() {
   const [open, setOpen] = useState(false);
   const collection = useRxCollection(COLLECTION.EMPLOYEE);
 
-  const { register, handleSubmit, reset } = useForm<Inputs>();
+  const { register, handleSubmit, reset } = useForm<FormInputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     await collection?.upsert(data);
     reset(defaultValues);
     setOpen(false);

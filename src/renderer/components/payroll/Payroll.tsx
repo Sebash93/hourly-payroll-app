@@ -9,26 +9,23 @@ import {
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import EmployeeCard from 'renderer/components/EmployeeCard';
-import PayrollHoursDialog from 'renderer/components/PayrollHoursDialog';
 import { EmployeeCollection, TemplateCollection } from 'renderer/db/db';
+import { ROUTES, getPath } from 'renderer/routes';
 import { useOneTemplateStore, usePayrollStore } from 'renderer/store/store';
 import { SHORT_DATE_FORMAT } from 'renderer/utils/dates';
+import EmployeeCard from './EmployeeCard';
+import PayrollHoursDialog from './PayrollHoursDialog';
 
 export default function PayrollPage() {
   let { templateId } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  // selectedEmployee state
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeCollection>(
     {}
   );
-
-  // has payroll
   const { result: templatePayroll, isFetching: isFetchingTemplatePayroll } =
     usePayrollStore(templateId);
 
-  // employess state
   const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
   const [template, setTemplate] = useState<TemplateCollection>(null);
 
@@ -50,8 +47,6 @@ export default function PayrollPage() {
     setSelectedEmployee(employee);
     setOpen(true);
   };
-
-  /*  template[0].populate('employees'); */
   if (isFetching || !template) return <CircularProgress />;
   return (
     <>
@@ -73,7 +68,9 @@ export default function PayrollPage() {
                   variant="contained"
                   endIcon={<ArticleIcon />}
                   disabled={!templatePayroll.length}
-                  onClick={() => navigate(`/payroll/documents/${template.id}`)}
+                  onClick={() =>
+                    navigate(getPath(ROUTES.DOCUMENTS, template.id))
+                  }
                 >
                   Documentos
                 </Button>

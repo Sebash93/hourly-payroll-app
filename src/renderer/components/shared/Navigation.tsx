@@ -30,10 +30,6 @@ export default function Navigation() {
   const location = useLocation();
   const paths = getPaths(location.pathname);
 
-  function handleNavigate(route: string) {
-    navigate(route);
-  }
-
   return (
     <Box
       sx={{

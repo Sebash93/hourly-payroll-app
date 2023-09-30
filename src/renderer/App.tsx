@@ -7,14 +7,14 @@ import { useEffect, useReducer, useState } from 'react';
 import { Route, MemoryRouter as Router, Routes } from 'react-router-dom';
 import { Provider as RxDbProvider } from 'rxdb-hooks';
 import './App.css';
-import Global from './components/Global';
-import Navigation from './components/Navigation';
+import DocumentsPage from './components/documents/Documents';
+import PayrollPage from './components/payroll/Payroll';
+import Global from './components/shared/Global';
+import Navigation from './components/shared/Navigation';
+import TemplatePage from './components/template/Template';
 import initialize from './db/db';
-import DocumentsPage from './pages/Documents';
-import PayrollPage from './pages/Payroll';
-import TemplatePage from './pages/Template';
 import './print.css';
-import RoutesList from './routes';
+import { ROUTES, RoutePath } from './routes';
 import snackbarReducer, { snackbarInitialState } from './store/snackbar';
 import theme from './theme/theme';
 
@@ -53,14 +53,17 @@ export default function App() {
               >
                 <Routes>
                   <Route
-                    path={RoutesList.root}
+                    path={RoutePath[ROUTES.ROOT]}
                     element={
                       <TemplatePage snackbarDispatcher={snackbarDispatcher} />
                     }
                   />
-                  <Route path={RoutesList.payroll} element={<PayrollPage />} />
                   <Route
-                    path={RoutesList.documents}
+                    path={RoutePath[ROUTES.PAYROLL]}
+                    element={<PayrollPage />}
+                  />
+                  <Route
+                    path={RoutePath[ROUTES.DOCUMENTS]}
                     element={<DocumentsPage />}
                   />
                 </Routes>

@@ -1,6 +1,6 @@
 import { Alert, AlertColor, Snackbar } from '@mui/material';
 import { Dispatch } from 'react';
-import { SnackbarAction, SnackbarState } from '../store/snackbar';
+import { SnackbarAction, SnackbarState } from '../../store/snackbar';
 
 export default function Global({
   snackbar,
