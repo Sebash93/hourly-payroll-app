@@ -9,10 +9,8 @@
     position: absolute;
     left: 0;
     top: 0;
-    overflow: hidden;
     print-color-adjust: exact;
-    max-width: 900px;
-    width: 100%;
+    width: 1200px;
   }
 
   .page {
