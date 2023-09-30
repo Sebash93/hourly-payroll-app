@@ -30,9 +30,13 @@ export const usePayrollStore = (templateId?: string) => {
 };
 
 export const useOneTemplateStore = (templateId?: string) => {
-  return useRxData<TemplateCollection>(COLLECTION.TEMPLATE, (collection) =>
+  const res = useRxData<TemplateCollection>(COLLECTION.TEMPLATE, (collection) =>
     collection.findOne({ selector: { id: templateId } })
   );
+  return {
+    ...res,
+    result: res.result[0],
+  };
 };
 
 export const useTemplateStore = (limit: number = 0) => {
@@ -86,6 +90,79 @@ export const useAugmentedTemplateStore = () => {
         ...templateData,
         employeesData: employees,
         hasPayrollData,
+      };
+    });
+  }
+
+  return {
+    isFetching,
+    result,
+  };
+};
+
+export interface AugmentedOneTemplate extends TemplateCollection {
+  employeesData: EmployeeCollection[];
+  hasPayrollData: boolean;
+}
+
+export const useAugmentedOneTemplateStore = (templateId: string) => {
+  const { result: templateData, isFetching: isFetchingTemplate } =
+    useOneTemplateStore(templateId);
+  const { result: employeesData, isFetching: isFetchingEmployees } =
+    useEmployeeStore();
+  const { result: templatePayroll, isFetching: isFetchingPayroll } =
+    usePayrollStore(templateId);
+  let result: AugmentedOneTemplate = {};
+
+  const isFetching = isFetchingSomething(
+    isFetchingTemplate,
+    isFetchingEmployees,
+    isFetchingPayroll
+  );
+  if (!isFetching) {
+    const employees = employeesData.filter((employee) =>
+      templateData.employees.includes(employee.id)
+    );
+    const hasPayrollData = !!templatePayroll.length;
+    const template = templateData._data as TemplateCollection;
+    result = {
+      ...template,
+      hasPayrollData,
+      employeesData: employees,
+    };
+  }
+
+  return {
+    isFetching,
+    result,
+  };
+};
+
+export interface AugementedPayroll extends PayrollCollection {
+  employeeData: EmployeeCollection;
+}
+
+export const useAugmentedPayrollStore = (templateId: string) => {
+  const { result: employeesData, isFetching: isFetchingEmployees } =
+    useEmployeeStore();
+  const { result: payroll, isFetching: isFetchingPayroll } =
+    usePayrollStore(templateId);
+
+  const isFetching = isFetchingSomething(
+    isFetchingEmployees,
+    isFetchingPayroll
+  );
+
+  let result: AugementedPayroll[] = [];
+
+  if (!isFetching) {
+    result = payroll.map((payrollItem) => {
+      const employeeData = employeesData.find(
+        (employee) => employee.id === payrollItem.employeeId
+      );
+      return {
+        ...payrollItem._data,
+        employeeData: employeeData as EmployeeCollection,
       };
     });
   }

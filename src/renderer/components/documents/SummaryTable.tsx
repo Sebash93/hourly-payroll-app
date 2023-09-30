@@ -1,5 +1,4 @@
 import {
-  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -9,49 +8,29 @@ import {
 } from '@mui/material';
 import currency from 'currency.js';
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
-import {
-  EmployeeCollection,
-  PayrollCollection,
-  TemplateCollection,
-} from 'renderer/db';
+import { useMemo } from 'react';
+import { TemplateCollection } from 'renderer/db';
+import { AugementedPayroll } from 'renderer/store/store';
 import theme from 'renderer/theme/theme';
 import { CURRENCY_FORMAT } from 'renderer/utils/adapters';
 import { LARGE_DATE_FORMAT } from 'renderer/utils/dates';
 
 interface SummaryTableProps {
-  payrollData: PayrollCollection[];
-  employeesData: EmployeeCollection[];
   templateData: TemplateCollection;
+  augementedPayrollData: AugementedPayroll[];
 }
 
 export default function SummaryTable({
-  payrollData,
-  employeesData,
   templateData,
+  augementedPayrollData,
 }: SummaryTableProps) {
-  const [payrollWithEmployees, setPayrollWithEmployees] =
-    useState<PayrollWithEmployees[]>();
-  const [total, setTotal] = useState<number>(0);
+  const total = useMemo(() => {
+    return augementedPayrollData.reduce(
+      (acc, payroll) => acc + payroll.payment_amount,
+      0
+    );
+  }, [augementedPayrollData]);
 
-  useEffect(() => {
-    if (!payrollData?.length || !employeesData?.length) return;
-    let newTotal = 0;
-    const newPayroll = payrollData.map((payroll) => {
-      const employeeInfo = employeesData.find(
-        (employee) => employee.id === payroll.employeeId
-      );
-      newTotal += payroll.payment_amount;
-      return {
-        ...payroll._data,
-        employee: employeeInfo,
-      };
-    });
-    setTotal(newTotal);
-    setPayrollWithEmployees(newPayroll);
-  }, [payrollData, employeesData]);
-
-  if (!payrollWithEmployees?.length) return <CircularProgress />;
   return (
     <TableContainer className="printable">
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
@@ -88,11 +67,11 @@ export default function SummaryTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {payrollWithEmployees.map((payroll, index) => {
+          {augementedPayrollData.map((payroll, index) => {
             return (
               <TableRow key={payroll.id}>
                 <TableCell sx={{ textAlign: 'center' }}>{index + 1}</TableCell>
-                <TableCell>{payroll.employee.name}</TableCell>
+                <TableCell>{payroll.employeeData.name}</TableCell>
                 <TableCell sx={{ textAlign: 'center' }}>
                   <b>
                     {currency(payroll.payment_amount, CURRENCY_FORMAT).format()}

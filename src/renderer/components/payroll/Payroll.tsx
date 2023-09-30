@@ -7,11 +7,11 @@ import {
   Typography,
 } from '@mui/material';
 import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { EmployeeCollection, TemplateCollection } from 'renderer/db';
+import { EmployeeCollection } from 'renderer/db';
 import { ROUTES, getPath } from 'renderer/routes';
-import { useOneTemplateStore, usePayrollStore } from 'renderer/store/store';
+import { useAugmentedOneTemplateStore } from 'renderer/store/store';
 import { SHORT_DATE_FORMAT } from 'renderer/utils/dates';
 import EmployeeCard from './EmployeeCard';
 import PayrollHoursDialog from './PayrollHoursDialog';
@@ -23,22 +23,10 @@ export default function PayrollPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeCollection>(
     {}
   );
-  const { result: templatePayroll } = usePayrollStore(templateId);
-  const { result: templates, isFetching } = useOneTemplateStore(templateId);
 
-  const [employees, setEmployees] = useState<EmployeeCollection[]>([]);
-  const [template, setTemplate] = useState<TemplateCollection>(null);
-
-  // Load employees
-  useEffect(() => {
-    async function populateEmployees() {
-      if (templates.length === 0) return;
-      const templateEmployees = await templates[0].populate('employees');
-      setEmployees(templateEmployees);
-      setTemplate(templates[0]);
-    }
-    populateEmployees();
-  }, [templates]);
+  const { result: template, isFetching } = useAugmentedOneTemplateStore(
+    templateId as string
+  );
 
   const handleEmployeeClick = (employee: EmployeeCollection) => {
     setSelectedEmployee(employee);
@@ -64,7 +52,7 @@ export default function PayrollPage() {
                 <Button
                   variant="contained"
                   endIcon={<ArticleIcon />}
-                  disabled={!templatePayroll.length}
+                  disabled={!template.hasPayrollData}
                   onClick={() =>
                     navigate(getPath(ROUTES.DOCUMENTS, template.id))
                   }
@@ -76,7 +64,7 @@ export default function PayrollPage() {
           </Grid>
         </Grid>
         <Grid container spacing={4}>
-          {employees.map((employee) => (
+          {template.employeesData.map((employee) => (
             <Grid key={employee.id} item lg={3} md={4} sm={6} xs={12}>
               <EmployeeCard
                 id={employee.id}
@@ -93,7 +81,7 @@ export default function PayrollPage() {
           startDate={format(new Date(template.start_date), SHORT_DATE_FORMAT)}
           endDate={format(new Date(template.end_date), SHORT_DATE_FORMAT)}
           employee={selectedEmployee}
-          template={templates[0]}
+          template={template}
         />
       </Paper>
     </>

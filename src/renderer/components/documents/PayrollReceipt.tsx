@@ -10,16 +10,16 @@ import {
 import currency from 'currency.js';
 import { format } from 'date-fns';
 import { TemplateCollection } from 'renderer/db';
+import { AugementedPayroll } from 'renderer/store/store';
 import {
   CURRENCY_FORMAT,
   generatePayrollHoursReceiptModel,
 } from 'renderer/utils/adapters';
 import config from 'renderer/utils/config';
 import { LARGE_DATE_FORMAT } from 'renderer/utils/dates';
-import { PayrollWithEmployees } from 'renderer/utils/types';
 
 interface PayrollReceiptProps {
-  employeePayroll: PayrollWithEmployees;
+  employeePayroll: AugementedPayroll;
   template: TemplateCollection;
 }
 
@@ -56,7 +56,7 @@ export default function PayrollReceipt({
             <TableCell sx={{ verticalAlign: 'top' }}>
               Pagado a:
               <Typography variant="h6">
-                {employeePayroll.employee.name}
+                {employeePayroll.employeeData.name}
               </Typography>
             </TableCell>
             <TableCell sx={{ verticalAlign: 'top' }}>
