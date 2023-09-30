@@ -69,6 +69,7 @@ export default function NewEmployeeDialog() {
                 id="name"
                 label="Nombre"
                 type="text"
+                required
                 fullWidth
                 variant="standard"
                 {...register('name', { required: true })}
@@ -80,6 +81,7 @@ export default function NewEmployeeDialog() {
                 id="id"
                 label="Cédula/NIT"
                 type="text"
+                required
                 fullWidth
                 variant="standard"
                 {...register('id', { required: true })}

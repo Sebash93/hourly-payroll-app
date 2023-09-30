@@ -93,12 +93,14 @@ export default function PayrollHoursDialog({
     setPaymentAmount(paymentAmount);
   };
 
-  const onClose = () => {
-    reset(defaultValues);
-    setTotalHours({});
-    setHoursData({});
-    setPaymentAmount(0);
-    handleClose();
+  const onClose = (reason: string) => {
+    if (reason !== 'backdropClick') {
+      reset(defaultValues);
+      setTotalHours({});
+      setHoursData({});
+      setPaymentAmount(0);
+      handleClose();
+    }
   };
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -139,7 +141,13 @@ export default function PayrollHoursDialog({
   };
 
   return (
-    <Dialog fullWidth maxWidth="xl" open={open} onClose={onClose}>
+    <Dialog
+      fullWidth
+      maxWidth="xl"
+      open={open}
+      onClose={onClose}
+      disableEscapeKeyDown
+    >
       <DialogTitle>
         Horas del {startDate} al {endDate}
       </DialogTitle>

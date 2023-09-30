@@ -5,7 +5,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material';
 import currency from 'currency.js';
 import { format } from 'date-fns';
@@ -37,44 +36,32 @@ export default function PayrollReceipt({
         <TableHead>
           <TableRow>
             <TableCell colSpan={2} sx={{ width: '40%' }}>
-              <Typography variant="h5">Comprobante de Egreso</Typography>
+              Comprobante de Egreso
             </TableCell>
+            <TableCell>Ciudad: {config.COMPANY_INFO.city}</TableCell>
             <TableCell>
-              Ciudad:{' '}
-              <Typography variant="h6" sx={{ display: 'inline-block' }}>
-                {config.COMPANY_INFO.city}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              Fecha:{' '}
-              <Typography variant="h6" sx={{ display: 'inline-block' }}>
-                {format(new Date(), LARGE_DATE_FORMAT)}
-              </Typography>
+              Fecha: <b>{format(new Date(), LARGE_DATE_FORMAT)}</b>
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell sx={{ verticalAlign: 'top' }}>
               Pagado a:
-              <Typography variant="h6">
-                {employeePayroll.employeeData.name}
-              </Typography>
+              <br /> <b>{employeePayroll.employeeData.name}</b>
             </TableCell>
             <TableCell sx={{ verticalAlign: 'top' }}>
               Por valor de:
-              <Typography variant="h6">
+              <br />
+              <b>
                 {currency(
                   employeePayroll.payment_amount,
                   CURRENCY_FORMAT
                 ).format()}
-              </Typography>
+              </b>
             </TableCell>
             <TableCell colSpan={2} sx={{ verticalAlign: 'top' }}>
-              Por concepto de:
-              <Typography variant="h6">
-                {config.COMPANY_INFO.payrollDetail} en el periodo del{' '}
-                {format(new Date(template.start_date), LARGE_DATE_FORMAT)} al{' '}
-                {format(new Date(template.end_date), LARGE_DATE_FORMAT)}
-              </Typography>
+              Por concepto de {config.COMPANY_INFO.payrollDetail} en el periodo
+              del {format(new Date(template.start_date), LARGE_DATE_FORMAT)} al{' '}
+              {format(new Date(template.end_date), LARGE_DATE_FORMAT)}
             </TableCell>
           </TableRow>
         </TableHead>

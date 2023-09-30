@@ -38,7 +38,7 @@ export default function EmployeeCard({
         <div>
           Horas comun: {payroll?.total_common_hours}
           <br />
-          Horas festivo: {payroll?.total_common_hours}
+          Horas festivo: {payroll?.total_holiday_hours}
           <Divider sx={{ mt: 2 }} /> Pago Total:{' '}
           {currency(payroll?.payment_amount, CURRENCY_FORMAT).format()}
         </div>

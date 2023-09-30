@@ -40,7 +40,7 @@ export const generatePayrollHoursRows = (template: TemplateCollection) => {
     let defaultEndTime = setHours(setMinutes(date, 0), 17);
 
     if (isSunday || isSaturday || isHoliday) {
-      defaultStartTime = setHours(setMinutes(date, 0), 7);
+      defaultStartTime = setHours(setMinutes(date, 0), 6);
       defaultEndTime = setHours(setMinutes(date, 15), 14);
     }
     return {
